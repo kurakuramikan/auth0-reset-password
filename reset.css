@@ -1,0 +1,100 @@
+* {
+  margin: 0;
+  padding: 0;
+  font-size: 0;
+  font-family: "Noto Sans Japanese", -apple-system, BlinkMacSystemFont, "Hiragino Kaku Gothic ProN", "Meiryo", sans-serif;
+}
+
+body {
+  width: 100%;
+  height: 100%;
+  background-color: #f7f8fb;
+}
+
+.logo {
+  text-align: center;
+  user-select:none;
+  -webkit-user-select:none;
+  -ms-user-select: none;
+  -moz-user-select:none;
+  -khtml-user-select:none;
+  -webkit-user-drag:none;
+  -khtml-user-drag:none;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  width: 440px;
+  margin: 56px auto 0;
+}
+
+form {
+  margin-top: 40px;
+  background-color: #fff;
+  border-radius: 4px;
+  box-shadow: 0 4px 6px -4px rgba(56,59,71,0.2);
+}
+
+h1 {
+  display: inline-block;
+  width: 100%;
+  height: 56px;
+  border-radius: 4px 4px 0 0;
+  padding: 8px 0 0 0;
+  line-height: 56px;
+  text-align: center;
+  font-size: 15px;
+  color: #383B47;
+  background-color: #fff;
+  box-shadow: 0 4px 6px -4px rgba(56,59,71,0.2);
+}
+
+.form-wrapper {
+  box-sizing: border-box;
+  padding: 10px 32px 32px;
+}
+
+label, input, button {
+  display: inline-block;
+  width: 100%;
+  height: 48px;
+  font-size: 100%;
+}
+
+button { margin-top: 22px; }
+
+label {
+  line-height: 48px;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+input {
+  border: 0;
+  border-radius: 4px;
+  background-color: #F7F8FB;
+  box-shadow: inset 0 1px 4px 0 rgba(56,59,71,0.06);
+  font-size: 14px;
+  text-indent: 1em;
+}
+
+button {
+  border-radius: 4px;
+  font-size: 14px;
+  color: #fff;
+  background: linear-gradient(135deg, #7B34E2 0%, #D19ACE 100%);
+  box-shadow: 0 1px 4px 0 rgba(#7B34E2, 0.3);
+  text-align: center;
+  text-decoration: none;
+  user-select: none;
+  transition: opacity 0.2s ease-out, box-shadow 0.2s ease-out;
+  cursor: pointer;
+}
+
+button:hover {
+  box-shadow: 0 1px 8px 0 rgba(#7B34E2, 0.7);
+  opacity: 0.85;
+}

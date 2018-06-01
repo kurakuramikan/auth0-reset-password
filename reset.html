@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="//fonts.googleapis.com/earlyaccess/notosansjapanese.css">
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        font-size: 0;
+        font-family: "Noto Sans Japanese", -apple-system, BlinkMacSystemFont, "Hiragino Kaku Gothic ProN", "Meiryo", sans-serif;
+      }
+
+      body {
+        width: 100%;
+        height: 100%;
+        background-color: #f7f8fb;
+      }
+
+      .logo {
+        text-align: center;
+        user-select:none;
+        -webkit-user-select:none;
+        -ms-user-select: none;
+        -moz-user-select:none;
+        -khtml-user-select:none;
+        -webkit-user-drag:none;
+        -khtml-user-drag:none;
+      }
+
+      .container {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: center;
+        width: 440px;
+        margin: 56px auto 0;
+      }
+
+      form {
+        margin-top: 40px;
+        background-color: #fff;
+        border-radius: 4px;
+        box-shadow: 0 4px 6px -4px rgba(56,59,71,0.2);
+      }
+
+      h1 {
+        display: inline-block;
+        width: 100%;
+        height: 56px;
+        border-radius: 4px 4px 0 0;
+        padding: 8px 0 0 0;
+        line-height: 56px;
+        text-align: center;
+        font-size: 15px;
+        color: #383B47;
+        background-color: #fff;
+        box-shadow: 0 4px 6px -4px rgba(56,59,71,0.2);
+      }
+
+      .form-wrapper {
+        box-sizing: border-box;
+        padding: 10px 32px 32px;
+      }
+
+      label, input, button {
+        display: inline-block;
+        width: 100%;
+        height: 48px;
+        font-size: 100%;
+      }
+
+      button { margin-top: 22px; }
+
+      label {
+        line-height: 48px;
+        font-size: 14px;
+        font-weight: bold;
+      }
+
+      input {
+        border: 0;
+        border-radius: 4px;
+        background-color: #F7F8FB;
+        box-shadow: inset 0 1px 4px 0 rgba(56,59,71,0.06);
+        font-size: 14px;
+        text-indent: 1em;
+      }
+
+      button {
+        border-radius: 4px;
+        font-size: 14px;
+        color: #fff;
+        background: linear-gradient(135deg, #7B34E2 0%, #D19ACE 100%);
+        box-shadow: 0 1px 4px 0 rgba(#7B34E2, 0.3);
+        text-align: center;
+        text-decoration: none;
+        user-select: none;
+        transition: opacity 0.2s ease-out, box-shadow 0.2s ease-out;
+        cursor: pointer;
+      }
+
+      button:hover {
+        box-shadow: 0 1px 8px 0 rgba(#7B34E2, 0.7);
+        opacity: 0.85;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="reset-view" class="container">
+      <div id="error-view" style="display: none" class="row">
+        Sorry, this is embarrassing.  There was an error.
+      </div>
+
+      <img src="https://app.proris.team/assets/images/vector/common_logo_standard.svg" alt="proris" class="logo">
+
+      <form id="change-password-form" action="/lo/reset" method="post">
+        <h1>パスワードの再設定</h1>
+
+        <div class="form-wrapper">
+          <div class="input-wrapper">
+            <label calss="label" for="newPassword">新しいパスワード</label>
+            <input type="password" id="newPassword" name="newPassword" placeholder="半角英数8文字以上">
+          </div>
+          <div class="input-wrapper">
+            <label calss="label" for="confirmNewPassword">新しいパスワード（確認）</label>
+            <input type="password" id="confirmNewPassword" name="confirmNewPassword" class="" placeholder="半角英数8文字以上">
+          </div>
+          <button type="submit" class="">変更する</button>
+
+         <!-- Do not remove this.  This protects against CSRF vulnerabilities -->
+          <input type="hidden" name="_csrf" value="{{csrf_token}}" />
+          <input type="hidden" name="ticket" value="{{ticket}}" />
+          <input type="hidden" name="email" value="{{email}}" />
+        </div>
+      </form>
+
+      <div id="completed-view" style="display: none" class="row">
+        Nice work, you changed your password.
+      </div>
+    </div>
+
+    <script src="//code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js" integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4" crossorigin="anonymous"></script>
+    <script>
+      var resetView = $("#reset-view");
+      var completedView = $("#completed-view");
+      var errorView = $("#error-view");
+
+      var form = $("#change-password-form");
+      form.submit(function(e) {
+        e.preventDefault();
+
+        $.ajax({
+          type: form.attr('method'),
+          url: form.attr('action'),
+          data: form.serialize(),
+          success: handleSuccess,
+          error: handleError
+        });
+      });
+
+      var handleSuccess = function(res) {
+        // Check if the Email Template contains a redirectTo url.  If so redirect there.
+        if (res.body && typeof res.body.result_url === "https://app.proris.team/signin?from=/") {
+          return window.location.replace(res.body.result_url);
+        } else {
+          // Show and on-page view
+          resetView.hide();
+          errorView.hide();
+          completedView.show();
+        }
+      };
+
+      var handleError = function(res) {
+        var getErrorFunc = !!res ? getResponseError : getNetworkError;
+        var error = getErrorFunc(res);
+        completedView.hide();
+        resetView.show();
+        errorView.show();
+        errorView.val(error);
+      };
+
+      var getResponseError = function(res) {
+        var body, text = res;
+        if (!body || typeof body !== "object") {
+          body = {};
+        }
+        passwordErrors = {
+          PasswordStrengthError: "weakPasswordError",
+          PasswordHistoryError: "passwordHistoryError",
+          PasswordDictionaryError: "passwordDictError",
+          PasswordNoUserInfoError: "passwordNoUserInfoError"
+        };
+        var error = passwordErrors[body.name] || "serverError";
+        return error;
+      };
+
+      var getNetworkError = function(res) {
+        var didTimeout = !!err.timeout;
+        var error = didTimeout ? "timedoutError" : "networkError";
+        return error;
+      };
+    </script>
+  </body>
+</html>
+
